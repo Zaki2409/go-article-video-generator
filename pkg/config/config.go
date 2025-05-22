@@ -1,4 +1,4 @@
-package config 
+package config
 
 import (
 	"log"
@@ -6,22 +6,37 @@ import (
 )
 
 type Config struct {
-	ChatGPTAPIKey string
-	ZapierWebhookURL string 
+	RapidAPIKey         string
+	RapidAPIHost        string
+	VideoRapidAPIKey    string
+	VideoRapidAPIHost   string
 }
 
-func LoadConfig () *Config {
-	ChatGPTKEY := os.Getenv("CHATGPT_API_KEY") 
-	if ChatGPTKEY == "" {
-		log.Fatal("Chat gpt api key environment variable is not set")
-	} 
-	zapierURL :-= os.Getenv("ZAPEIR_WEBHOOK_URL")
-	if zapierURL == "" {
-		log.Fatal("ZAPEIR_WEBHOOK_URL environment variable is not set")
+func LoadConfig() *Config {
+	rapidAPIKey := os.Getenv("RAPIDAPI_KEY")
+	if rapidAPIKey == "" {
+		log.Fatal("RAPIDAPI_KEY environment variable not set")
 	}
 
-	return &Config {
-		ChatGPTAPIKey : ChatGPTKEY
-		ZapierWebhookURL : zapierURL
+	rapidAPIHost := os.Getenv("RAPIDAPI_HOST")
+	if rapidAPIHost == "" {
+		log.Fatal("RAPIDAPI_HOST environment variable not set")
 	}
-} 
+
+	videoRapidAPIKey := os.Getenv("VIDEO_RAPIDAPI_KEY")
+	if videoRapidAPIKey == "" {
+		log.Fatal("VIDEO_RAPIDAPI_KEY environment variable not set")
+	}
+
+	videoRapidAPIHost := os.Getenv("VIDEO_RAPIDAPI_HOST")
+	if videoRapidAPIHost == "" {
+		log.Fatal("VIDEO_RAPIDAPI_HOST environment variable not set")
+	}
+
+	return &Config{
+		RapidAPIKey:         rapidAPIKey,
+		RapidAPIHost:        rapidAPIHost,
+		VideoRapidAPIKey:    videoRapidAPIKey,
+		VideoRapidAPIHost:   videoRapidAPIHost,
+	}
+}

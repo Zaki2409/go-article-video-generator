@@ -9,44 +9,31 @@ import (
 	"internal/models"
 )
 
-type ChatGPTRequest struct {
-	Model    string `json:"model"`
-	Messages []struct {
-		Role    string `json:"role"`
-		Content string `json:"content"`
-	} `json:"messages"`
+type RapidAPISummarizeRequest struct {
+	Lang string `json:"lang"`
+	Text string `json:"text"`
 }
 
-type ChatGPTResponse struct {
-	Choices []struct {
-		Message struct {
-			Content string `json:"content"`
-		} `json:"message"`
-	} `json:"choices"`
+type RapidAPISummarizeResponse struct {
+	Summary string `json:"summary"`
 }
 
 type Summarizer struct {
 	apiKey string
+	apiHost string
 }
 
-func NewSummarizer(apiKey string) *Summarizer {
-	return &Summarizer{apiKey: apiKey}
+func NewSummarizer(apiKey, apiHost string) *Summarizer {
+	return &Summarizer{
+		apiKey: apiKey,
+		apiHost: apiHost,
+	}
 }
 
 func (s *Summarizer) Summarize(article *models.Article) (*models.Summary, error) {
-	prompt := fmt.Sprintf("Please summarize the following article in 3-5 sentences:\n\nTitle: %s\n\nContent: %s", article.Title, article.Content)
-
-	requestBody := ChatGPTRequest{
-		Model: "gpt-3.5-turbo",
-		Messages: []struct {
-			Role    string `json:"role"`
-			Content string `json:"content"`
-		}{
-			{
-				Role:    "user",
-				Content: prompt,
-			},
-		},
+	requestBody := RapidAPISummarizeRequest{
+		Lang: "en", // or make this configurable
+		Text: fmt.Sprintf("%s\n\n%s", article.Title, article.Content),
 	}
 
 	jsonBody, err := json.Marshal(requestBody)
@@ -54,13 +41,18 @@ func (s *Summarizer) Summarize(article *models.Article) (*models.Summary, error)
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", "https://api.openai.com/v1/chat/completions", bytes.NewBuffer(jsonBody))
+	req, err := http.NewRequest(
+		"POST", 
+		"https://article-extractor-and-summarizer.p.rapidapi.com/summarize-text", 
+		bytes.NewBuffer(jsonBody),
+	)
 	if err != nil {
 		return nil, err
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.apiKey))
+	req.Header.Set("x-rapidapi-key", s.apiKey)
+	req.Header.Set("x-rapidapi-host", s.apiHost)
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
@@ -69,23 +61,23 @@ func (s *Summarizer) Summarize(article *models.Article) (*models.Summary, error)
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("rapidapi returned status: %d", resp.StatusCode)
+	}
+
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
 
-	var chatResponse ChatGPTResponse
-	if err := json.Unmarshal(body, &chatResponse); err != nil {
+	var apiResponse RapidAPISummarizeResponse
+	if err := json.Unmarshal(body, &apiResponse); err != nil {
 		return nil, err
-	}
-
-	if len(chatResponse.Choices) == 0 {
-		return nil, fmt.Errorf("no response from ChatGPT")
 	}
 
 	summary := &models.Summary{
 		ArticleID: article.ID,
-		Text:      chatResponse.Choices[0].Message.Content,
+		Text:      apiResponse.Summary,
 	}
 
 	return summary, nil

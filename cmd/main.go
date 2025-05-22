@@ -15,8 +15,8 @@ func main() {
 	cfg := config.LoadConfig()
 
 	// Initialize services
-	summarizer := services.NewSummarizer(cfg.ChatGPTAPIKey)
-	videoGenerator := services.NewVideoGenerator(cfg.ZapierWebhookURL)
+	summarizer := services.NewSummarizer(cfg.RapidAPIKey, cfg.RapidAPIHost)
+	videoGenerator := services.NewVideoGenerator(cfg.VideoRapidAPIKey, cfg.VideoRapidAPIHost)
 
 	// Initialize handlers
 	apiHandler := handlers.NewAPIHandler(summarizer, videoGenerator)

@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"internal/handlers"
-	"internal/services"
-	"pkg/config"
-	"api/v1"
+	 "github.com/Zaki2409/go-article-video-generator/api/v1"
+    "github.com/Zaki2409/go-article-video-generator/internal/handlers"
+    "github.com/Zaki2409/go-article-video-generator/internal/services"
+    "github.com/Zaki2409/go-article-video-generator/pkg/config"
 )
 
 func main() {

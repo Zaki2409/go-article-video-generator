@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"internal/models"
+	"github.com/Zaki2409/go-article-video-generator/internal/models"
 )
 
 type RapidAPISummarizeRequest struct {

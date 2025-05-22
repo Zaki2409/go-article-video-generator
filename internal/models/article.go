@@ -12,13 +12,14 @@ type Summary struct {
 	Text string `json : "text"`
 }
 
-type VedioRequest struct {
+type VideoRequest struct {
 	SummaryID string `json: "summary_id"`
 	Title string `json : "title"`
 	Text string `json : "text"`
 }
 
-type VedioResponse struct {
+type VideoResponse struct {
 	ID string `json: "id"`
 	VedioURL string `json : "vedio_url"`
+	VideoURL string `json:"video_url"`
 }

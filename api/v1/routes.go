@@ -2,7 +2,7 @@ package v1
 
 import (
 	"net/http"
-	"internal/handlers"
+	"github.com/Zaki2409/go-article-video-generator/internal/handlers"
 )
 
 func SetupRoutes(mux *http.ServeMux, handler *handlers.APIHandler) {

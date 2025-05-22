@@ -3,8 +3,8 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
-	"internal/models"
-	"internal/services"
+	"github.com/Zaki2409/go-article-video-generator/internal/models"
+    "github.com/Zaki2409/go-article-video-generator/internal/services"
 )
 
 type APIHandler struct {
